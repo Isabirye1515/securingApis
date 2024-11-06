@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -15,7 +17,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // In-memory authentication for testing purposes
         auth.inMemoryAuthentication()
             .withUser("user").password(passwordEncoder().encode("password")).roles("USER")
             .and()
@@ -25,24 +26,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+            .cors() // Enable CORS
+            .and()
             .authorizeRequests()
                 .antMatchers("/", "/login", "/api/**", "/js/**").authenticated()
-        // Allow access to login page and static resources
-                .antMatchers("/api/hello").hasRole("USER") // Require USER role for /api/hello
-                .anyRequest().authenticated() // Require authentication for all other requests
+                .antMatchers("/api/hello").hasRole("USER")
+                .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/") // Specify your login page
-                .loginProcessingUrl("/perform_login") 
-                .defaultSuccessUrl("/api/hello")// Specify a custom URL for processing login
+            .formLogin()
+                .loginPage("/")
+                .loginProcessingUrl("/perform_login")
+                .defaultSuccessUrl("/api/hello")
                 .permitAll()
                 .and()
             .logout()
-                .permitAll(); // Allow logout for everyone
+                .permitAll();
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Use BCrypt for password encoding
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**") // Apply to all endpoints
+                        .allowedOrigins("http://localhost:3000") // React origin
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowCredentials(true); // Allow cookies (important for session-based auth)
+            }
+        };
     }
 }
