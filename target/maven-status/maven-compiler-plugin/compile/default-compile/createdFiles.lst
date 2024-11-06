@@ -9,5 +9,6 @@ com/telesko/HomeController.class
 com/telesko/CORSFilter.class
 com/telesko/MovieService.class
 com/telesko/MovieRest.class
+com/telesko/SecurityConfig$1.class
 com/telesko/PersistCustomers.class
 com/telesko/HibernateUtil.class
