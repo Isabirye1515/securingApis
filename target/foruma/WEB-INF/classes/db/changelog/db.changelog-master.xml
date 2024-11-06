@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Create table for buys -->
+    <changeSet id="1" author="liquibase">
+        <createTable tableName="buys">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="movie_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="customer_id" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="buy_date" type="date">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create table for customers -->
+    <changeSet id="2" author="liquibase">
+        <createTable tableName="customers">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="name" type="varchar(255)" />
+            <column name="email" type="varchar(255)" />
+            <column name="arrival" type="date" />
+        </createTable>
+    </changeSet>
+
+    <!-- Create table for movies -->
+    <changeSet id="3" author="liquibase">
+        <createTable tableName="movies">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="name" type="varchar(255)" />
+            <column name="genere" type="varchar(255)" />
+            <column name="year" type="year" />
+            <column name="created_at" type="date" />
+            <column name="price" type="int" />
+        </createTable>
+    </changeSet>
+
+    <!-- Create table for rentals -->
+    <changeSet id="4" author="liquibase">
+        <createTable tableName="rentals">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="movie_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="customer_id" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="rental_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="return_date" type="date" />
+        </createTable>
+    </changeSet>
+
+    <!-- Changeset to create users table -->
+    <changeSet id="1" author="authorName">
+        <createTable tableName="users">
+            <column name="username" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="password" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="enabled" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Changeset to create authorities table -->
+    <changeSet id="2" author="authorName">
+        <createTable tableName="authorities">
+            <column name="username" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="authority" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <addForeignKeyConstraint baseTableName="authorities"
+                                     baseColumnNames="username"
+                                     referencedTableName="users"
+                                     referencedColumnNames="username" />
+        </createTable>
+    </changeSet>
+
+    <!-- Changeset to insert sample data into users table -->
+    <changeSet id="3" author="authorName">
+        <insert tableName="users">
+            <column name="username" value="user" />
+            <column name="password" value="$2a$10$TCyBOpTqFL4BM3aAAaUVQ.yplYsZBBbsffe5ogynGz/fyLZPPfXx." /> <!-- Replace with an encoded password -->
+            <column name="enabled" value="true" />
+        </insert>
+        <insert tableName="users">
+            <column name="username" value="admin" />
+            <column name="password" value="$2a$10$TCyBOpTqFL4BM3aAAaUVQ.yplYsZBBbsffe5ogynGz/fyLZPPfXx." /> <!-- Replace with an encoded password -->
+            <column name="enabled" value="true" />
+        </insert>
+    </changeSet>
+
+    <!-- Changeset to insert sample data into authorities table -->
+    <changeSet id="4" author="authorName">
+        <insert tableName="authorities">
+            <column name="username" value="user" />
+            <column name="authority" value="ROLE_USER" />
+        </insert>
+        <insert tableName="authorities">
+            <column name="username" value="admin" />
+            <column name="authority" value="ROLE_ADMIN" />
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
